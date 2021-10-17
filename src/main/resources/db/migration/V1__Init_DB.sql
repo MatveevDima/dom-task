@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS order_info;
+
+CREATE TABLE order_info
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(250) NOT NULL,
+    phone VARCHAR(250) NOT NULL,
+    mail VARCHAR(250) NOT NULL,
+    address VARCHAR(250) NOT NULL
+);
