@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -18,8 +20,13 @@ public class OrderInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+    @NotNull
     private String name;
+    @NotNull
     private String phone;
+    @NotNull
+    @Email
     private String mail;
+    @NotNull
     private String address;
 }

@@ -2,9 +2,9 @@ package com.example.domrf.task.exception.handler;
 
 import com.example.domrf.task.dto.OrderResponseDto;
 import com.example.domrf.task.exception.ApiException;
-import com.example.domrf.task.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,26 +16,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.example.domrf.task.resources.LoggerResources.THROW;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
     private final static Logger LOG = Logger.getLogger(ExceptionControllerAdvice.class.getCanonicalName());
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @RequestMapping(produces = "application/json;charset=utf-8")
-    @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<OrderResponseDto> handleValidationException(ValidationException vex,
-                                                                      WebRequest request) {
-        return handleExceptionByStatus(vex, request, HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @RequestMapping(produces = "application/json;charset=utf-8")
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    @RequestMapping(produces = APPLICATION_JSON_VALUE)
     @ExceptionHandler({ApiException.class})
     public ResponseEntity<OrderResponseDto> handleApiException(ApiException aex,
                                                                WebRequest request) {
-        return handleExceptionByStatus(aex, request, HttpStatus.INTERNAL_SERVER_ERROR);
+        return handleExceptionByStatus(aex, request, INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @RequestMapping(produces = APPLICATION_JSON_VALUE)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity<OrderResponseDto> handleValidationException(MethodArgumentNotValidException vex,
+                                                                      WebRequest request) {
+        return ResponseEntity.status(BAD_REQUEST).body(
+                new OrderResponseDto(false, LocalDateTime.now(),
+                        String.format("The parameter is incorrect: %s", vex.getFieldError().getField())));
     }
 
     private ResponseEntity<OrderResponseDto> handleExceptionByStatus(Exception ex,

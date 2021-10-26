@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -79,7 +80,7 @@ public class OrderServiceTest {
     @Test
     void addOrderException() {
 
-        when(repository.save(dima)).thenThrow(ApiException.class);
+        when(repository.save(dima)).thenThrow(RuntimeException.class);
         assertThrows(ApiException.class, () -> orderService.addOrder(dima));
     }
 }
